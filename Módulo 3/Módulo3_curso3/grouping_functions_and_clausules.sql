@@ -1,37 +1,32 @@
-use company;
+-- funções e cláusulas de agrupamento
 
--- cláusulas de agrupamento
+use company_constraints;
 
-SELECT count(*)
-FROM employee;
+select * from employee;
+select count(*) from employee;
 
-SELECT count(*)
-FROM employee, departament
-WHERE Dno = Dnumber AND Dname = 'Research';
+select count(*) from employee, departament
+	where Dno=Dnumber and Dname = 'Research';
 
-SELECT Dno, count(*), AVG (Salary)
-FROM employee
-GROUP BY Dno;
+select Dno, count(*), round(avg(Salary),2) from employee
+	group by Dno;
 
-SELECT Pnumber, Pname, COUNT(*)
-FROM project, works_on
-WHERE Pnumber = Pno
-GROUP BY Pnumber, Pname;
+select Dno, count(*) as Number_of_employees, round(avg(Salary),2) as Salary_avg from employee
+	group by Dno;
+    
+select Pnumber, Pname, count(*)
+	from project, works_on
+    where Pnumber = Pno
+    group by Pnumber, Pname;
 
-SELECT count(distinct Salary)
-FROM employee;
+select count(distinct Salary) from employee;
+select sum(Salary) as total_sal, max(Salary) as Max_sal, min(Salary) as Mini_sal, avg(Salary) as Avg_sal from employee;
 
+
+-- join será abordado no curso 5
 SELECT SUM(Salary), MAX(Salary), MIN(Salary), AVG(Salary)
-FROM employee;
-
-SELECT SUM(Salary) AS Total_Sal, MAX(Salary) AS Highest_Sal,
-MIN(Salary) AS Lowest_Sal, AVG(Salary) AS Average_Sal
-FROM employee;
-
-
-SELECT SUM (Salary), MAX (Salary), MIN (Salary), AVG (Salary)
 FROM (employee JOIN departament ON Dno = Dnumber)
-WHERE Dname = ‘Research;
+WHERE Dname = 'Research';
 
 
 SELECT Lname, Fname
@@ -39,21 +34,23 @@ FROM employee
 WHERE ( SELECT count(*)
 		FROM dependent
 		WHERE Ssn = Essn) >= 2;
-
+  
 --
+-- group by
 --
--- Group by Statement
---
---
+	
+show tables;
+select Pnumber, Pname, count(*) as Number_of_register, round(avg(Salary),2) as AVG_Salary
+	from project, works_on, employee
+	where Pnumber = Pno and Ssn = Essn
+    group by Pnumber, Pname;
 
-SELECT Pnumber, Pname, count(*)
-FROM PROJECT, WORKS_ON, EMPLOYEE
-WHERE Pnumber = Pno AND Ssn = Essn AND Dno = 5
-GROUP BY Pnumber, Pname;
-
-
-SELECT Ssn, Salary,count(*) how_many FROM employee
-	group by Ssn limit 3;
+select Pnumber, Pname, count(*) as Number_of_register, round(avg(Salary),2) as AVG_Salary
+	from project, works_on, employee
+	where Pnumber = Pno and Ssn = Essn
+    group by Pnumber
+    order by avg(Salary) desc;
+    
 
 --
 --
@@ -61,23 +58,21 @@ SELECT Ssn, Salary,count(*) how_many FROM employee
 --
 --
 
-SELECT Pnumber, Pname, count(*)
-FROM PROJECT, WORKS_ON
-WHERE Pnumber = Pno
-GROUP BY Pnumber, Pname
-HAVING count(*) > 2;
+select Pnumber, Pname, count(*)
+from project, works_on
+where Pnumber = Pno
+group by Pnumber, Pname
+having count(*) > 2;
 
-SELECT Dno, count(*)
-FROM employee
-WHERE Salary>40000
-GROUP BY Dno
-HAVING count(*) > 5;
+select Dno, count(*)
+	from employee 
+	where Salary > 30000
+    group by Dno
+    having count(*)>=2;
 
-
-SELECT Dno, count(*) FROM employee
-WHERE Salary>40000 AND Dno IN
-	( SELECT Dno
-	FROM employee
-	GROUP BY Dno
-	HAVING count(*) > 5)
-GROUP BY Dno;
+select Dno as Department, count(*) as NumberOfEmployess from employee
+	where Salary>20000 
+		and Dno in (select Dno from employee
+					group by Dno
+					having count(*)>=2)
+	group by Dno;
