@@ -1,4 +1,5 @@
 -- Union, Except, and Intersect
+create database teste;
 
 use teste;
 create table R(
@@ -15,3 +16,14 @@ select * from S WHERE A NOT IN (select A from R);
 select distinct R.A from R where R.A IN (select S.A from S);
 
 (select distinct R.A from R) union (Select distinct S.A from S);
+
+use database company_constraints;
+
+-- retornar o conjunto de projetos em que Smith trabalha e é gerente
+(select distinct Pnumber 
+	from project, departament, employee
+    where Dnum = Dnumber and Mgr_ssn = Ssn and Lname='Smith')
+UNION
+(select distinct Pnumber 
+	from project, works_on, employee
+    where Pnumber=Pno and Essn = Ssn and Lname='Smith');
