@@ -166,5 +166,7 @@ select e.Fname, e.Lname, e.Address from employee e, departament d
 
 desc employee;
 select * from project;
-select concat(Fname, ' ', Lname) as Complete_Name, Dname as Department_Name, Address from employee, departament where Dno = Dnumber and Address like '%Houston%';
+select concat(Fname, ' ', Lname) as Complete_Name, Dname as Department_Name, Address 
+	from employee, departament where Dno = Dnumber and Address like '%Houston%';
 select Fname, Lname from employee where (Salary > 3000.00 and Salary < 40000);
+select Fname, Lname from employee where (Salary between 20000 and 40000);
