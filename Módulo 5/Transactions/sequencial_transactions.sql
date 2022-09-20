@@ -1,0 +1,3 @@
+-- criando transações sequencias
+
+USE 

@@ -1,0 +1,39 @@
+
+-- making a copy of database
+mysqldump db1 > dump.sql
+mysqladmin create db2
+mysql db2 < dump.sql
+
+-- Do not use --databases on the mysqldump command line because that causes USE db1
+-- to be included in the dump file, which overrides the effect of naming db2 on the mysql command line.
+
+
+--Copy a Database from one Server to Another
+
+mysqldump db1 > dump.sql
+mysqldump --databases db1 > dump.sql
+-- copie o dump file para o servidor 2
+mysql < dump.sql
+
+-- Use of --databases with the mysqldump command line causes the dump file to include CREATE DATABASE 
+-- and USE statements that create the database if it does exist and make it the default database for the reloaded data.
+
+-- criando o banco de dados no servidor 2
+mysqladmin create db1
+mysql db1 < dump.sql
+
+-- Dumping Table Definitions and Content Separately
+
+/*
+The --no-data option tells mysqldump not to dump table data, resulting in the dump file containing only statements to create the tables. Conversely, the --no-create-info option tells mysqldump to suppress CREATE statements from the output, so that the dump file contains only table data.
+
+For example, to dump table definitions and data separately for the test database, use these commands:
+*/
+
+mysqldump --no-data test > dump-defs.sql
+mysqldump --no-create-info test > dump-data.sql
+
+-- For a definition-only dump, add the --routines and --events options to also include stored routine and event definitions
+mysqldump --no-data --routines --events test > dump-defs.sql
+
+mysqldump --routines --triggers --no-create-info --no-data --no-create-db --skip-opt -u USUARIO -p BANCODEDADOS > stored-triggers.sql
