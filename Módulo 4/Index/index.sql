@@ -23,17 +23,11 @@ use customer_managment;
 create table if not exists customer( 
 
 	id_customer int auto_increment primary key, 
-
     customer_name varchar(25), 
-
     email varchar(40), 
-
-    cpf char(9), 
-
+    cpf char(9),
     credit_card char(13), 
-
     contact char(9), 
-
 	address varchar(30) 
 
 ); 
@@ -91,16 +85,11 @@ ALTER TABLE customer DROP INDEX idx_email;
 -- Unique index 
 
 ALTER TABLE customer ADD UNIQUE idx_email (email); 
-
-ALTER TABLE customer ADD primary key idx_email (email); 
-
-  
+ALTER TABLE customer ADD primary key idx_email (email);
 
 -- multicolumn index 
 
 ALTER TABLE customer ADD INDEX idx_full_name (last_name, first_name); 
-
-  
 
 explain 
 

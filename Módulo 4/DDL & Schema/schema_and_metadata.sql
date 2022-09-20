@@ -12,6 +12,7 @@ create database testuser;
 
 create user 'geral'@localhost identified by '123456798';
 grant all privileges on testuser.* to 'geral'@localhost; 
+grant select on company_constraints.employee to 'geral'@localhost;
 /*
 grant all privileges on testuser.* to 'geral'@localhost; 
 grant all privileges on testuser.table to 'geral'@localhost; 
