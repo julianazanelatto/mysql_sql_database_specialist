@@ -1,7 +1,5 @@
 -- funções e cláusulas de agrupamento
 
-use company_constraints;
-
 select * from employee;
 select count(*) from employee;
 

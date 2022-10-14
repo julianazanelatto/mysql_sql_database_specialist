@@ -55,59 +55,41 @@ insert into works_on values (123456789, 1, 32.5),
 -- Consultas SQL
 
 select * from employee;
+select Ssn, count(Essn) from employee e, dependent d where (e.Ssn = d.Essn);
+select * from dependent;
 
--- gerente e seu departamento 
-select Ssn, Fname, Dname from employee e, departament d where (e.Ssn = d.Mgr_ssn);
+SELECT Bdate, Address FROM employee
+WHERE Fname = 'John' AND Minit = 'B' AND Lname = 'Smith';
 
--- recuperando dependentes dos empregrados
-select Fname, Dependent_name, Relationship from employee, dependent where Essn = Ssn;
-
--- 
-select Bdate, Address from employee
-	where Fname = 'John' and Minit='B' and Lname='Smith';
-
--- recuperando departamento específico
 select * from departament where Dname = 'Research';
 
-select Fname, Lname, Address from employee, departament
-	where Dname='Research' and Dnumber=Dno;
-    
-desc works_on;
+SELECT Fname, Lname, Address
+FROM employee, departament
+WHERE Dname = 'Research' AND Dnumber = Dno;
+
 select * from project;
-
-select Pname, Essn, Fname, Hours  
-from project, works_on, employee 
-	where Pnumber = Pno and Essn = Ssn;
-
-
 --
 --
 --
 -- Expressões e concatenação de strings
 --
 --
+-- recuperando informações dos departamentos presentes em Stafford
+select Dname as Department, Mgr_ssn as Manager from departament d, dept_locations l
+where d.Dnumber = l.Dnumber;
 
+-- padrão sql -> || no MySQL usa a função concat()
+select Dname as Department, concat(Fname, ' ', Lname) from departament d, dept_locations l, employee e
+where d.Dnumber = l.Dnumber and Mgr_ssn = e.Ssn;
 
+-- recuperando info dos projetos em Stafford
+select * from project, departament where Dnum = Dnumber and Plocation = 'Stafford';
 
-desc dept_locations;
-select * from dept_locations;
--- recuperando informações dos departmentos presenttes em Stafford
-select Dname as Department_Name, Mgr_ssn as Manager, Address from departament d, dept_locations l, employee e
-	where d.Dnumber = l.Dnumber and Dlocation='Stafford';
-
--- recuperando todos os gerentes que trabalham em Stafford
-select Dname as Department_Name, concat(Fname, ' ', Lname) as Manager from departament d, dept_locations l, employee e
-	where d.Dnumber = l.Dnumber and Dlocation='Stafford' and Mgr_ssn = e.Ssn;
-
-desc departament;
--- recuperando todos os gerentes, departamentos e seus nomes
-select Dname as Department_Name, concat(Fname, ' ', Lname) as Manager, Dlocation  from departament d, dept_locations l, employee e
-	where d.Dnumber = l.Dnumber and Mgr_ssn = e.Ssn;
-
-desc project;
-select Pnumber, Dnum, Lname, Address, Bdate from departament d, project p, employee e
-	where d.Dnumber = p.Dnum and p.Plocation='Stafford' and Mgr_ssn = e.Ssn;
-    
+-- recuperando info sobre os departamentos e projetos localizados em Stafford
+SELECT Pnumber, Dnum, Lname, Address, Bdate
+FROM project, departament, employee
+WHERE Dnum = Dnumber AND Mgr_ssn = Ssn AND
+Plocation = 'Stafford';
 
 SELECT * FROM employee WHERE Dno IN (3,6,9);
 
@@ -116,12 +98,14 @@ SELECT * FROM employee WHERE Dno IN (3,6,9);
 -- Operadores lógicos
 --
 --
-select Bdate, Address from employee where Fname='John' and Minit='B' and Lname='Smith';
-select * from departament;
-select * from departament where Dname = 'Research' or Dname = 'Administration';
 
-select Fname, Lname from employee, departament where Dname = 'Research' and Dnumber=Dno;
-select concat(Fname, Lname) as Complete_name from employee, departament where Dname = 'Research' and Dnumber=Dno;
+SELECT Bdate, Address
+FROM EMPLOYEE
+WHERE Fname = ‘John’ AND Minit = ‘B’ AND Lname = ‘Smith’;
+
+SELECT Fname, Lname, Address
+FROM EMPLOYEE, DEPARTMENT
+WHERE Dname = ‘Research’ AND Dnumber = Dno;
 
 --
 --
@@ -134,22 +118,10 @@ select Fname, Lname, Salary, Salary*0.011 from employee;
 select Fname, Lname, Salary, Salary*0.011 as INSS from employee;
 select Fname, Lname, Salary, round(Salary*0.011,2) as INSS from employee;
 
-select * 
-	from employee e, works_on as w, project as p
-    where (e.Ssn = w.Essn and w.Pno=p.Pnumber);
-    
-select concat(Fname, ' ', Lname) as Complete_name, Salary, Salary*1.1 as increased_salary
-	from employee e, works_on as w, project as p
-    where (e.Ssn = w.Essn and w.Pno=p.Pnumber and p.Pname='ProductX');
-    
+-- definir um aumento de salário para os gerentes que trabalham no projeto associado ao ProdutoX
 select e.Fname, e.Lname, 1.1*e.Salary as increased_sal from employee as e,
 works_on as w, project as p where e.Ssn = w.Essn and w.Pno = p.Pnumber and p.Pname='ProductX';
 
--- definir um aumento de salário para os gerentes que trabalham no projeto associado ao ProdutoX
-select concat(Fname, ' ', Lname) as Complete_name, Salary, round(1.1*Salary,2) as increased_salary
-	from employee e, works_on as w, project as p
-    where (e.Ssn = w.Essn and w.Pno=p.Pnumber and p.Pname='ProductX');
-    
 -- concatenando e fornecendo alias
 select Dname as Department, concat(Fname, ' ', Lname) as Manager from departament d, dept_locations l, employee e
 where d.Dnumber = l.Dnumber and Mgr_ssn = e.Ssn;
@@ -162,11 +134,3 @@ select Fname, Lname, Address from employee, departament
 select e.Fname, e.Lname, e.Address from employee e, departament d
 	where d.Dname = 'Research' and d.Dnumber = e.Dno;
 
--- like e between
-
-desc employee;
-select * from project;
-select concat(Fname, ' ', Lname) as Complete_Name, Dname as Department_Name, Address 
-	from employee, departament where Dno = Dnumber and Address like '%Houston%';
-select Fname, Lname from employee where (Salary > 3000.00 and Salary < 40000);
-select Fname, Lname from employee where (Salary between 20000 and 40000);
